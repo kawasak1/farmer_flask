@@ -12,9 +12,9 @@ from schemas import ProductSchema, UpdateProductSchema
 product_bp = Blueprint('product_bp', __name__)
 
 @product_bp.route('/products', methods=['POST'])
-@jwt_required()
 def create_product():
     data = request.get_json()
+    user_id = data["user_id"]
     logging.info(data)
     schema = ProductSchema()
     errors = schema.validate(data)
@@ -22,7 +22,7 @@ def create_product():
     if errors:
         return jsonify(errors), 400
 
-    user_id = get_jwt_identity()
+    # user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
     if not user or user.role != 'farmer':
