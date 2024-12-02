@@ -13,13 +13,13 @@ product_bp = Blueprint('product_bp', __name__)
 @product_bp.route('/products', methods=['POST'])
 @jwt_required()
 def create_product():
-    data = request.get_json()
-    print(data)
-    schema = ProductSchema()
-    errors = schema.validate(data)
-    print(errors)
-    if errors:
-        return jsonify(errors), 400
+    # data = request.get_json()
+    # print(data)
+    # schema = ProductSchema()
+    # errors = schema.validate(data)
+    # print(errors)
+    # if errors:
+    #     return jsonify(errors), 400
 
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
