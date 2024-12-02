@@ -2,7 +2,6 @@ from flask import Flask, jsonify
 from config import Config
 from extensions import db, migrate, login_manager, bcrypt, api, jwt
 from werkzeug.exceptions import RequestEntityTooLarge
-import logging
 
 def create_app():
     app = Flask(__name__)
@@ -15,12 +14,6 @@ def create_app():
     bcrypt.init_app(app)
     api.init_app(app)
     jwt.init_app(app)
-
-    logging.basicConfig(
-        level=logging.DEBUG,  # Choose DEBUG, INFO, WARNING, ERROR, CRITICAL as needed
-        format='%(asctime)s [%(levelname)s]: %(message)s',
-        handlers=[logging.StreamHandler()]  # Ensures logs are printed to the console
-    )
 
     # Import models after initializing db to prevent circular imports
     from models import User
