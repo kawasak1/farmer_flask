@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
+from app import app
 
 
 from extensions import db
@@ -14,8 +15,11 @@ product_bp = Blueprint('product_bp', __name__)
 @jwt_required()
 def create_product():
     data = request.get_json()
+    print(data)
+    app.logger.error(data)
     schema = ProductSchema()
     errors = schema.validate(data)
+    app.logger.error(errors)
     print(errors)
     if errors:
         return jsonify(errors), 400
