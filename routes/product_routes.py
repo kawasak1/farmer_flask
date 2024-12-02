@@ -16,6 +16,7 @@ def create_product():
     data = request.get_json()
     schema = ProductSchema()
     errors = schema.validate(data)
+    print(errors)
     if errors:
         return jsonify(errors), 400
 
