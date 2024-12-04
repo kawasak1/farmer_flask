@@ -1,6 +1,4 @@
-import logging
 from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -14,15 +12,12 @@ product_bp = Blueprint('product_bp', __name__)
 @product_bp.route('/products', methods=['POST'])
 def create_product():
     data = request.get_json()
-    user_id = data["user_id"]
-    logging.info(data)
     schema = ProductSchema()
     errors = schema.validate(data)
-    print(errors)
     if errors:
         return jsonify(errors), 400
 
-    # user_id = get_jwt_identity()
+    user_id = data["user_id"]
     user = User.query.get(user_id)
 
     if not user or user.role != 'farmer':
@@ -66,7 +61,6 @@ def create_product():
     else:
         return jsonify({'error': 'Either category_id or category_name must be provided.'}), 400
 
-    print(data)
     # Create the Product
     product = Product(
         farmer_id=user_id,
@@ -101,15 +95,15 @@ def create_product():
     return jsonify({'message': 'Product created successfully', 'product_id': product.id}), 201
 
 @product_bp.route('/products/<int:product_id>', methods=['PUT'])
-@jwt_required()
 def update_product(product_id):
     data = request.get_json()
     schema = UpdateProductSchema()
     errors = schema.validate(data)
     if errors:
+        print(errors)
         return jsonify(errors), 400
 
-    user_id = get_jwt_identity()
+    user_id = data["user_id"]
     user = User.query.get(user_id)
 
     if user.role != 'farmer':
@@ -187,9 +181,9 @@ def update_product(product_id):
     return jsonify({'message': 'Product updated successfully'}), 200
 
 @product_bp.route('/products/<int:product_id>', methods=['DELETE'])
-@jwt_required()
 def delete_product(product_id):
-    user_id = get_jwt_identity()
+    data = request.get_json()
+    user_id = data["user_id"]
     user = User.query.get(user_id)
 
     if user.role != 'farmer':
@@ -237,10 +231,10 @@ def get_product(product_id):
 
     return jsonify(product_data), 200
 
-@product_bp.route('/products/farmer', methods=['GET'])
-@jwt_required()
+@product_bp.route('/products/farmer', methods=['POST'])
 def get_my_products():
-    user_id = get_jwt_identity()
+    data = request.get_json()
+    user_id = data["user_id"]
     user = User.query.get(user_id)
 
     if not user or user.role != 'farmer':

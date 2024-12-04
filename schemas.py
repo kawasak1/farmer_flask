@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, validate
 
 class ProductSchema(Schema):
+    user_id = fields.Integer(required=True)
     name = fields.Str(required=True)
     category_id = fields.Integer(required=False)
     category_name = fields.String(required=False)
@@ -12,6 +13,7 @@ class ProductSchema(Schema):
     images = fields.List(fields.Url())
 
 class UpdateProductSchema(Schema):
+    user_id = fields.Integer(required=True)
     name = fields.String(required=False)
     category_id = fields.Integer(required=False)
     category_name = fields.String(required=False)
